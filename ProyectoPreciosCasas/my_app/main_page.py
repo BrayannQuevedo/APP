@@ -25,6 +25,7 @@ st.set_page_config(page_title='App - Venta de casas',
 
 st.title('Dinámica Inmobiliaria en King County')
 st.header('Propuesto por [Sébastien Lozano-Forero](https://www.linkedin.com/in/sebastienlozanoforero/)')
+st.header('Editado por: Estudiantes')
 
 
 # @st.cache
@@ -35,7 +36,7 @@ def get_data():
 data = get_data()
 data_ref = data.copy()
 
-st.sidebar.markdown("# Parámetros")
+st.sidebar.markdown("# Filtros")
 data['date'] = pd.to_datetime(data['date'], format = '%Y-%m-%d').dt.date
 data['yr_built']= pd.to_datetime(data['yr_built'], format = '%Y').dt.year
 # data['yr_renovated'] = data['yr_renovated'].apply(lambda x: pd.to_datetime(x, format ='%Y') if x >0 else x )
@@ -62,10 +63,10 @@ data.loc[data['condition']<=2, 'condition_type'] = 'bad'
 data.loc[data['condition'].isin([3,4]), 'condition_type'] = 'regular'
 data.loc[data['condition']== 5, 'condition_type'] = 'good'
 
-data['price_tier'] = data['price'].apply(lambda x: 'Primer cuartil' if x <= 321950 else
-                                                   'Segundo cuartil' if (x > 321950) & (x <= 450000) else
-                                                   'Tercer cuartil' if (x > 450000) & (x <= 645000) else
-                                                   'Cuarto cuartil')
+data['price_tier'] = data['price'].apply(lambda x: 'Primer cuartil, $321.950' if x <= 321950 else
+                                                   'Segundo cuartil, $321.950 y $450.000' if (x > 321950) & (x <= 450000) else
+                                                   'Tercer cuartil, $450.000 y $645.000' if (x > 450000) & (x <= 645000) else
+                                                   'Cuarto cuartil, $645.000')
 
 data['price/sqft'] = data['price']/data['sqft_living']
 
@@ -107,7 +108,7 @@ st.subheader('Filtros adicionales (Opcionales)')
 OptFiltro = st.multiselect(
      'Variables a incluir en los filtros:',
      ['Habitaciones', 'Baños', 'Área construida (pies cuadrados)','Pisos','Vista al agua','Evaluación de la propiedad','Condición'],
-     ['Habitaciones', 'Baños'])
+     ['Habitaciones', 'Baños','Pisos'])
 
 
 if 'Habitaciones' in OptFiltro: 
@@ -204,7 +205,7 @@ with col1:
                     key_on='feature.properties.ZIPCODE',
                     columns=['zipcode', 'id'],
                     threshold_scale=custom_scale,
-                    fill_color='YlOrRd',
+                    fill_color='YlGn',
                     highlight=True).add_to(mapa)
      folium_static(mapa)
 
@@ -219,7 +220,7 @@ with col2:
                     key_on='feature.properties.ZIPCODE',
                     columns=['zipcode', 'price'],
                     threshold_scale=custom_scale,
-                    fill_color='YlOrRd',
+                    fill_color='YlGn',
                     highlight=True).add_to(mapa)
      folium_static(mapa)
 
@@ -236,7 +237,7 @@ with col1:
                     key_on='feature.properties.ZIPCODE',
                     columns=['zipcode', 'price/sqft'],
                     threshold_scale=custom_scale,
-                    fill_color='YlOrRd',
+                    fill_color='YlGn',
                     highlight=True).add_to(mapa)
      folium_static(mapa)
 
@@ -289,7 +290,7 @@ with col1:
      data['dormitory_type']=data['bedrooms'].apply(lambda x: 'Estudio' if x <=1 else 'Apartamento' if x==2 else 'Casa' )
      df = data[['yr_built', 'price','dormitory_type']].groupby(['yr_built','dormitory_type']).mean().reset_index()
      with sns.axes_style("darkgrid"):
-          plt.style.use('dark_background')
+          plt.style.use('ggplot')
           fig = plt.figure(figsize=(7,7)) # try different values
           fig = sns.lineplot(x ='yr_built', y= 'price', data = df, hue="dormitory_type", style="dormitory_type")
           fig.set_xlabel("Año de Construcción", fontsize = 17)
@@ -303,7 +304,7 @@ with col2:
      st.write('Evolución del precio por pie cuadrado por tipo de propiedad y año de construcción')
      df = data[['yr_built', 'price/sqft','dormitory_type']].groupby(['yr_built','dormitory_type']).mean().reset_index()
      with sns.axes_style("darkgrid"):
-          plt.style.use('dark_background')
+          plt.style.use('ggplot')
           fig = plt.figure(figsize=(7,7)) # try different values
           fig = sns.lineplot(x ='yr_built', y= 'price/sqft', data = df, hue="dormitory_type", style="dormitory_type")
           fig.set_xlabel("Año de Construcción", fontsize = 17)
