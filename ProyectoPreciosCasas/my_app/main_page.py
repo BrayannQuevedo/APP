@@ -200,6 +200,27 @@ if 'Condición' in OptFiltro:
           st.markdown("""
                El filtro **Condición** no es aplicable para la selección actual de valores
                """)
+# Estadística Descriptiva 
+att_num = data.select_dtypes(include = ['int64','float64'])
+media = pd.DataFrame(att_num.apply(np.mean))
+mediana = pd.DataFrame(att_num.apply(np.median))
+std = pd.DataFrame(att_num.apply(np.std))
+maximo = pd.DataFrame(att_num.apply(np.max))
+minimo = pd.DataFrame(att_num.apply(np.min))
+df_EDA = pd.concat([minimo,media,mediana,maximo,std], axis = 1)
+df_EDA.columns = ['Mínimo','Media','Mediana','Máximo','std']
+st.header('Datos descriptivos')
+df_EDA = df_EDA.drop(index =['id', 'lat', 'long','yr_built','yr_renovated'], axis = 0 )
+
+df_EDA.index =['Precio','No. Cuartos', 'No. Baños', 'Área construida (pies cuadrados)', 
+                    'Área del terreno (pies cuadrados)', 'No. pisos', 'Vista agua (dummy)',
+                    'Puntaje de la vista', 'Condición','Evaluación propiedad (1-13)',
+                    'Área sobre tierra', 'Área sótano', 'Área construída 15 casas más próximas', 
+                    'Área del terreno 15 casas más próximas', 'Precio por pie cuadrado']
+col1, col2 = st.columns(2)
+col1.metric("No. Casas", data.shape[0],str(100*round(data.shape[0]/data_ref.shape[0],4))+'% de las casas disponibles',delta_color="off")
+col2.metric("No. Casas Nuevas (Construida después de 1990)",data[data['house_age'] == 'new_house'].shape[0],str(100*round(data[data['house_age'] == 'new_house'].shape[0]/data_ref.shape[0],4))+'% de las casas disponibles',delta_color="off")
+st.dataframe(df_EDA)  
 
 # Mapas 
 
@@ -270,27 +291,7 @@ with col2:
      folium_static(mapa)
 
 
-# Estadística Descriptiva 
-att_num = data.select_dtypes(include = ['int64','float64'])
-media = pd.DataFrame(att_num.apply(np.mean))
-mediana = pd.DataFrame(att_num.apply(np.median))
-std = pd.DataFrame(att_num.apply(np.std))
-maximo = pd.DataFrame(att_num.apply(np.max))
-minimo = pd.DataFrame(att_num.apply(np.min))
-df_EDA = pd.concat([minimo,media,mediana,maximo,std], axis = 1)
-df_EDA.columns = ['Mínimo','Media','Mediana','Máximo','std']
-st.header('Datos descriptivos')
-df_EDA = df_EDA.drop(index =['id', 'lat', 'long','yr_built','yr_renovated'], axis = 0 )
 
-df_EDA.index =['Precio','No. Cuartos', 'No. Baños', 'Área construida (pies cuadrados)', 
-                    'Área del terreno (pies cuadrados)', 'No. pisos', 'Vista agua (dummy)',
-                    'Puntaje de la vista', 'Condición','Evaluación propiedad (1-13)',
-                    'Área sobre tierra', 'Área sótano', 'Área construída 15 casas más próximas', 
-                    'Área del terreno 15 casas más próximas', 'Precio por pie cuadrado']
-col1, col2 = st.columns(2)
-col1.metric("No. Casas", data.shape[0],str(100*round(data.shape[0]/data_ref.shape[0],4))+'% de las casas disponibles',delta_color="off")
-col2.metric("No. Casas Nuevas (Construida después de 1990)",data[data['house_age'] == 'new_house'].shape[0],str(100*round(data[data['house_age'] == 'new_house'].shape[0]/data_ref.shape[0],4))+'% de las casas disponibles',delta_color="off")
-st.dataframe(df_EDA)  
 
 st.header('Algunas tendencias')
 
