@@ -205,7 +205,7 @@ if 'Condición' in OptFiltro:
 
 # info geojson
 url2 = 'https://raw.githubusercontent.com/sebmatecho/CienciaDeDatos/master/ProyectoPreciosCasas/data/KingCount.geojson'
-col1, col2 = st.columns(2)
+# col1, col2 = st.columns(2)
 with col1:
      st.header("Densidad de casas disponibles por código postal")
      data_aux = data[['id','zipcode']].groupby('zipcode').count().reset_index()
@@ -221,7 +221,7 @@ with col1:
                     highlight=True).add_to(mapa)
      folium_static(mapa)
 
-with col2: 
+# with col2: 
      st.header("Precios de casas disponibles por código postal")
      data_aux = data[['price','zipcode']].groupby('zipcode').mean().reset_index()
      custom_scale = (data_aux['price'].quantile((0,0.2,0.4,0.6,0.8,1))).tolist()
