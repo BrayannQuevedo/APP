@@ -107,7 +107,7 @@ st.subheader('Filtros adicionales (Opcionales)')
 
 OptFiltro = st.multiselect(
      'Variables a incluir en los filtros:',
-     ['Habitaciones', 'Baños', 'Área construida (pies cuadrados)','Pisos','Vista al agua','Evaluación de la propiedad','Condición'],
+     ['Habitaciones', 'Baños', 'Área construida (pies cuadrados)','Pisos','Vista al agua','Evaluación de la propiedad','Condición','Año Construido'],
      ['Habitaciones', 'Baños','Pisos'])
 
 
@@ -122,6 +122,18 @@ if 'Habitaciones' in OptFiltro:
           st.markdown("""
                El filtro **Habitaciones** no es aplicable para la selección actual de valores
                """)
+if 'Año Construido' in OptFiltro: 
+     if data['yr_built'].min() < data['yr_built'].max():
+          min_ano, max_ano = st.sidebar.select_slider(
+          'Año Construido',
+          options=list(sorted(set(data['yr_built']))),
+          value=(data['yr_built'].min(),data['yr_built'].max()))
+          data = data[(data['yr_built']>= min_ano)&(data['yr_built']<= max_ano)]
+     else:
+          st.markdown("""
+               El filtro **Año Construido** no es aplicable para la selección actual de valores
+               """)
+        
 if 'Baños' in OptFiltro: 
      if data['bathrooms'].min() < data['bathrooms'].max():
           min_banhos, max_banhos = st.sidebar.select_slider(
