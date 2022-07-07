@@ -15,7 +15,7 @@ from distutils.fancy_getopt   import OptionDummy
 
 
 
-st.set_page_config(page_title='App - Venta de casas',
+st.set_page_config(page_title='App - Venta de aptos',
                     layout="wide", 
                     page_icon=':house',  
                     initial_sidebar_state="expanded")
